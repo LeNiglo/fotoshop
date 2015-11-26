@@ -3,6 +3,7 @@ package uk.ac.gtvl2.views;
 import javafx.application.Application;
 import uk.ac.gtvl2.controllers.EditorController;
 import uk.ac.gtvl2.controllers.Parser;
+import uk.ac.gtvl2.models.Editor;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -16,9 +17,13 @@ public abstract class EditorView extends Application {
     private ResourceBundle bundle;
     private static final String BUNDLE_NAME = "uk/ac/gtvl2/resources/MessagesBundle";
     protected EditorController controller;
+    protected Editor model;
 
     public EditorView() {
         this.setCurrentLocale(Locale.getDefault());
+
+        this.model = new Editor();
+        this.controller = new EditorController(model, this);
     }
 
     public String getTranslation(String key, String... args) {
@@ -55,13 +60,7 @@ public abstract class EditorView extends Application {
 
     public abstract void showPrompt();
 
-    public abstract void doLaunch(String... args);
-
     public void attachController(EditorController controller) {
-        System.out.println(3);
-        System.out.println(controller);
         this.controller = controller;
-        System.out.println(4);
-        System.out.println(this.controller);
     }
 }

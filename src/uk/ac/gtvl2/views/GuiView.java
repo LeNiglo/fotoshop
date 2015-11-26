@@ -10,11 +10,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import uk.ac.gtvl2.controllers.EditorController;
+import uk.ac.gtvl2.commands.ICommand;
 import uk.ac.gtvl2.controllers.Parser;
-import uk.ac.gtvl2.models.Editor;
+import uk.ac.gtvl2.models.Command;
+import uk.ac.gtvl2.models.EnumCommand;
 
 /**
  * Created by leniglo on 20/11/15.
@@ -22,21 +22,17 @@ import uk.ac.gtvl2.models.Editor;
 public class GuiView extends EditorView {
 
     public GuiView() {
-        System.out.println(1);
-        System.out.println(this.controller);
-    }
-
-    @Override
-    public void doLaunch(String... args) {
-        System.out.println(4);
-        launch(args);
-        System.out.println(5);
+        super();
+        try {
+            controller.edit();
+        } catch (Exception e) {
+            this.showError(this.getTranslation("error"));
+        }
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Hello World");
-        System.out.println(this.controller);
         Pane root = new BorderPane(this.createCenter(), this.createTop(), this.createRight(), this.createBot(), this.createLeft());
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
@@ -49,14 +45,9 @@ public class GuiView extends EditorView {
     }
 
     private Node createTop() {
-
-        System.out.println(6);
-        System.out.println(this.controller);
-
         Button openBtn = new Button(getTranslation("OPEN"));
-        openBtn.setOnAction(this.controller.handleEvent());
+        openBtn.setOnAction(this.createHandler(EnumCommand.OPEN));
         Button quitBtn = new Button(getTranslation("QUIT"));
-        //quitBtn.setOnAction(this.controller.handleEvent());
         Pane pane = new HBox(5, openBtn, quitBtn);
         return pane;
     }
@@ -78,12 +69,14 @@ public class GuiView extends EditorView {
 
     @Override
     public void showError(String error) {
-
+        System.err.println(error);
+        //TODO MAKE POPUP
     }
 
     @Override
     public void showMessage(String message) {
-
+        System.out.println(message);
+        //TODO MAKE POPUP
     }
 
     @Override
@@ -99,5 +92,15 @@ public class GuiView extends EditorView {
     @Override
     public void showPrompt() {
 
+    }
+
+    private EventHandler<ActionEvent> createHandler(EnumCommand enumCommand) {
+        try {
+            final ICommand iCommand = (ICommand) Class.forName(enumCommand.getClassName()).newInstance();
+            return iCommand.handler(model, this, controller);
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

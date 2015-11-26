@@ -1,5 +1,7 @@
 package uk.ac.gtvl2.commands;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import uk.ac.gtvl2.controllers.EditorController;
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.Editor;
@@ -17,5 +19,10 @@ public class QuitCommand implements ICommand {
     @Override
     public boolean undo(Editor model, EditorView view, EditorController controller) {
         return true;
+    }
+
+    @Override
+    public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
+        return null;
     }
 }

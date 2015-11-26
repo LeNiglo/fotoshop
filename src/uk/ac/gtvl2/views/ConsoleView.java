@@ -11,7 +11,13 @@ public class ConsoleView extends EditorView {
     private final Parser parser;
 
     public ConsoleView() {
+        super();
         this.parser = new Parser(this);
+        try {
+            controller.edit();
+        } catch (Exception e) {
+            this.showError(this.getTranslation("error"));
+        }
     }
 
     @Override
@@ -44,10 +50,9 @@ public class ConsoleView extends EditorView {
     /*
      * JavaFX required
      */
-    @Override
-    public void doLaunch(String... args) { }
 
     @Override
-    public void start(Stage primaryStage) throws Exception { }
+    public void start(Stage primaryStage) throws Exception {
+    }
 
 }

@@ -1,5 +1,7 @@
 package uk.ac.gtvl2.commands;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import uk.ac.gtvl2.controllers.EditorController;
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.EditableImage;
@@ -46,5 +48,10 @@ public class OpenCommand implements ICommand {
     @Override
     public boolean undo(Editor model, EditorView view, EditorController controller) {
         return false;
+    }
+
+    @Override
+    public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
+        return null;
     }
 }

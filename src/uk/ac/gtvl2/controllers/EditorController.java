@@ -1,14 +1,20 @@
 package uk.ac.gtvl2.controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.stage.FileChooser;
 import uk.ac.gtvl2.commands.ICommand;
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.Editor;
 import uk.ac.gtvl2.models.EnumCommand;
 import uk.ac.gtvl2.views.EditorView;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by leniglo on 20/11/15.
@@ -32,18 +38,11 @@ public class EditorController {
             // execute them until the editing session is over.
             boolean finished = false;
             while (!finished) {
-                Command command = null;
-                command = this.view.getParser().getCommand();
+                Command command = this.view.getParser().getCommand();
                 finished = processCommand(command);
             }
             this.view.showMessage(view.getTranslation("GOODBYE"));
         } else {
-            try {
-                this.view.doLaunch();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
             this.view.showMessage(view.getTranslation("WELCOME"));
         }
     }
@@ -54,7 +53,17 @@ public class EditorController {
             @Override
             public void handle(ActionEvent event) {
 
-                processCommand(new Command(new ArrayList<>(), view.getBundle()));
+                List<String> words = new ArrayList<>();
+
+                words.add(((Button) event.getTarget()).getText());
+
+                if (processCommand(new Command(words, view.getBundle()))) {
+                    try {
+                        Platform.exit();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         };
     }
@@ -81,20 +90,21 @@ public class EditorController {
         if (cmd == null) {
             // CRITICAL ERROR, we want to quit.
             view.showError(view.getTranslation("CRITICAL") + view.getTranslation("CMD_NOT_FOUND", commandWord));
-            return true;
+            return wantToQuit;
         } else {
             try {
 
                 String className = COMMANDS_PKG + cmd.getClassName();
                 final ICommand iCommand = (ICommand) (Class.forName(className).newInstance());
-                return iCommand.run(model, view, this, command);
+                wantToQuit = iCommand.run(model, view, this, command);
 
             } catch (IllegalAccessException | ClassNotFoundException | InstantiationException e) {
                 // CRITICAL ERROR, we want to quit.
                 view.showError(view.getTranslation("CRITICAL") + view.getTranslation("CMD_NOT_FOUND", commandWord));
-                return true;
+                return wantToQuit;
             }
         }
+        return wantToQuit;
     }
 
 }

@@ -1,5 +1,7 @@
 package uk.ac.gtvl2.commands;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import uk.ac.gtvl2.controllers.EditorController;
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.EditableImage;
@@ -47,5 +49,10 @@ public class Rot90Command implements ICommand {
         EditableImage image = model.popFilter().getPreviousImage();
         model.setCurrentImage(image);
         return true;
+    }
+
+    @Override
+    public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
+        return null;
     }
 }

@@ -16,7 +16,7 @@ public class Command {
      */
     public Command(List<String> words, ResourceBundle bundle) {
         this.commandWords = new ArrayList<>(words);
-        this.unknown = EnumCommand.getCmd(words.get(0), bundle) == null;
+        this.unknown = words.size() > 0 ? EnumCommand.getCmd(words.get(0), bundle) == null : true;
     }
 
     /**
