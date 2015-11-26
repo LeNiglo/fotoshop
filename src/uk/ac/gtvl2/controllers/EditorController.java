@@ -1,14 +1,14 @@
 package uk.ac.gtvl2.controllers;
 
-import com.sun.istack.internal.NotNull;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import uk.ac.gtvl2.commands.ICommand;
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.Editor;
 import uk.ac.gtvl2.models.EnumCommand;
 import uk.ac.gtvl2.views.EditorView;
+
+import java.util.ArrayList;
 
 /**
  * Created by leniglo on 20/11/15.
@@ -22,30 +22,39 @@ public class EditorController {
     public EditorController(Editor model, EditorView view) {
         this.model = model;
         this.view = view;
-        this.view.doLaunch();
+        this.view.attachController(this);
     }
 
     public void edit() {
-        this.view.showMessage(view.getTranslation("WELCOME"));
-        // Enter the main command loop.  Here we repeatedly read commands and
-        // execute them until the editing session is over.
-        boolean finished = false;
-        while (!finished) {
-            Command command = null;
-            if (this.view.isConsole()) {
+        if (this.view.isConsole()) {
+            this.view.showMessage(view.getTranslation("WELCOME"));
+            // Enter the main command loop.  Here we repeatedly read commands and
+            // execute them until the editing session is over.
+            boolean finished = false;
+            while (!finished) {
+                Command command = null;
                 command = this.view.getParser().getCommand();
+                finished = processCommand(command);
+            }
+            this.view.showMessage(view.getTranslation("GOODBYE"));
+        } else {
+            try {
+                this.view.doLaunch();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            finished = processCommand(command);
+            this.view.showMessage(view.getTranslation("WELCOME"));
         }
-        this.view.showMessage(view.getTranslation("GOODBYE"));
     }
 
-    public static EventHandler<ActionEvent> handleEvent() {
+
+    public EventHandler<ActionEvent> handleEvent() {
         return new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
 
+                processCommand(new Command(new ArrayList<>(), view.getBundle()));
             }
         };
     }

@@ -15,6 +15,7 @@ public abstract class EditorView extends Application {
     private Locale currentLocale;
     private ResourceBundle bundle;
     private static final String BUNDLE_NAME = "uk/ac/gtvl2/resources/MessagesBundle";
+    protected EditorController controller;
 
     public EditorView() {
         this.setCurrentLocale(Locale.getDefault());
@@ -55,4 +56,12 @@ public abstract class EditorView extends Application {
     public abstract void showPrompt();
 
     public abstract void doLaunch(String... args);
+
+    public void attachController(EditorController controller) {
+        System.out.println(3);
+        System.out.println(controller);
+        this.controller = controller;
+        System.out.println(4);
+        System.out.println(this.controller);
+    }
 }

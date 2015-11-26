@@ -21,16 +21,22 @@ import uk.ac.gtvl2.models.Editor;
  */
 public class GuiView extends EditorView {
 
-    public GuiView() { }
+    public GuiView() {
+        System.out.println(1);
+        System.out.println(this.controller);
+    }
 
     @Override
     public void doLaunch(String... args) {
+        System.out.println(4);
         launch(args);
+        System.out.println(5);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Hello World");
+        System.out.println(this.controller);
         Pane root = new BorderPane(this.createCenter(), this.createTop(), this.createRight(), this.createBot(), this.createLeft());
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
@@ -43,10 +49,14 @@ public class GuiView extends EditorView {
     }
 
     private Node createTop() {
+
+        System.out.println(6);
+        System.out.println(this.controller);
+
         Button openBtn = new Button(getTranslation("OPEN"));
-        openBtn.setOnAction(EditorController.handleEvent());
+        openBtn.setOnAction(this.controller.handleEvent());
         Button quitBtn = new Button(getTranslation("QUIT"));
-        quitBtn.setOnAction(EditorController.handleEvent());
+        //quitBtn.setOnAction(this.controller.handleEvent());
         Pane pane = new HBox(5, openBtn, quitBtn);
         return pane;
     }
