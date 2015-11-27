@@ -30,7 +30,7 @@ public abstract class EditorView extends Application {
         if (this.bundle.containsKey(key))
             return MessageFormat.format(this.bundle.getString(key), args);
         else
-            this.showError(this.getTranslation("MISSING_TRANSLATION", key, new Exception().getStackTrace()[1].getClassName()));
+            this.showError(this.getTranslation("MISSING_TRANSLATION", key, new Exception().getStackTrace()[1].getClassName(), String.valueOf(new Exception().getStackTrace()[1].getLineNumber())));
         return null;
     }
 

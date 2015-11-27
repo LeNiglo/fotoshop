@@ -4,12 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import uk.ac.gtvl2.commands.ICommand;
 import uk.ac.gtvl2.configurations.EditorConfig;
@@ -21,21 +20,26 @@ import uk.ac.gtvl2.models.EnumCommand;
  */
 public class GuiView extends EditorView {
 
+    private BorderPane root;
+    private Text statusText;
+
     public GuiView() {
         super();
-        try {
-            controller.edit();
-        } catch (Exception e) {
-            this.showError(this.getTranslation("error"));
-        }
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Hello World");
-        Pane root = new BorderPane(this.createCenter(), this.createTop(), this.createRight(), this.createBot(), this.createLeft());
+        primaryStage.setTitle(getTranslation("PROGRAM"));
+        root = new BorderPane(this.createCenter(), this.createTop(), this.createRight(), this.createBot(), this.createLeft());
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
+
+        try {
+            controller.edit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError(getTranslation("ERROR", e.getMessage(), (e.getCause() != null ? e.getCause().getMessage() : "")));
+        }
     }
 
     private Node createCenter() {
@@ -58,7 +62,11 @@ public class GuiView extends EditorView {
     }
 
     private Node createBot() {
-        Pane pane = null;
+        Pane pane = new VBox();
+        //TODO css
+        pane.setStyle("-fx-background-color: gainsboro");
+        statusText = new Text();
+        pane.getChildren().add(statusText);
         return pane;
     }
 
@@ -70,13 +78,17 @@ public class GuiView extends EditorView {
     @Override
     public void showError(String error) {
         System.err.println(error);
-        //TODO MAKE POPUP
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error !");
+        alert.setHeaderText(null);
+        alert.setContentText(error);
+        alert.showAndWait();
     }
 
     @Override
     public void showMessage(String message) {
-        System.out.println(message);
-        //TODO MAKE POPUP
+        if (this.statusText != null)
+            this.statusText.setText(message);
     }
 
     @Override

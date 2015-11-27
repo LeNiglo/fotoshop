@@ -33,10 +33,9 @@ public class EditorController {
 
     public void edit() {
         if (this.view.isConsole()) {
-            this.view.showMessage(view.getTranslation("WELCOME"));
-            // Enter the main command loop.  Here we repeatedly read commands and
-            // execute them until the editing session is over.
             boolean finished = false;
+            this.view.showMessage(view.getTranslation("WELCOME"));
+
             while (!finished) {
                 Command command = this.view.getParser().getCommand();
                 finished = processCommand(command);
@@ -45,27 +44,6 @@ public class EditorController {
         } else {
             this.view.showMessage(view.getTranslation("WELCOME"));
         }
-    }
-
-
-    public EventHandler<ActionEvent> handleEvent() {
-        return new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-                List<String> words = new ArrayList<>();
-
-                words.add(((Button) event.getTarget()).getText());
-
-                if (processCommand(new Command(words, view.getBundle()))) {
-                    try {
-                        Platform.exit();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
     }
 
     /**
