@@ -12,8 +12,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import uk.ac.gtvl2.commands.ICommand;
+import uk.ac.gtvl2.configurations.EditorConfig;
 import uk.ac.gtvl2.controllers.Parser;
-import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.EnumCommand;
 
 /**
@@ -46,8 +46,8 @@ public class GuiView extends EditorView {
 
     private Node createTop() {
         Button openBtn = new Button(getTranslation("OPEN"));
-        openBtn.setOnAction(this.createHandler(EnumCommand.OPEN));
         Button quitBtn = new Button(getTranslation("QUIT"));
+        quitBtn.setOnAction(this.createHandler(EnumCommand.QUIT));
         Pane pane = new HBox(5, openBtn, quitBtn);
         return pane;
     }
@@ -96,7 +96,7 @@ public class GuiView extends EditorView {
 
     private EventHandler<ActionEvent> createHandler(EnumCommand enumCommand) {
         try {
-            final ICommand iCommand = (ICommand) Class.forName(enumCommand.getClassName()).newInstance();
+            final ICommand iCommand = (ICommand) Class.forName(EditorConfig.COMMANDS_PKG + enumCommand.getClassName()).newInstance();
             return iCommand.handler(model, this, controller);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();

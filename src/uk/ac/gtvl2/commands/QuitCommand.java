@@ -1,5 +1,6 @@
 package uk.ac.gtvl2.commands;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import uk.ac.gtvl2.controllers.EditorController;
@@ -23,6 +24,16 @@ public class QuitCommand implements ICommand {
 
     @Override
     public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
-        return null;
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    view.stop();
+                    Platform.exit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 }

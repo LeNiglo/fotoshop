@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import uk.ac.gtvl2.commands.ICommand;
+import uk.ac.gtvl2.configurations.EditorConfig;
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.Editor;
 import uk.ac.gtvl2.models.EnumCommand;
@@ -23,7 +24,6 @@ public class EditorController {
 
     private final Editor model;
     private final EditorView view;
-    private static final String COMMANDS_PKG = "uk.ac.gtvl2.commands.";
 
     public EditorController(Editor model, EditorView view) {
         this.model = model;
@@ -94,7 +94,7 @@ public class EditorController {
         } else {
             try {
 
-                String className = COMMANDS_PKG + cmd.getClassName();
+                String className = EditorConfig.COMMANDS_PKG + cmd.getClassName();
                 final ICommand iCommand = (ICommand) (Class.forName(className).newInstance());
                 wantToQuit = iCommand.run(model, view, this, command);
 

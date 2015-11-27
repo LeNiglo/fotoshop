@@ -10,6 +10,8 @@ public class EditorConfig {
         return ourInstance;
     }
 
+    public static final String COMMANDS_PKG = "uk.ac.gtvl2.commands.";
+
     private EditorConfig() {
 
     }
