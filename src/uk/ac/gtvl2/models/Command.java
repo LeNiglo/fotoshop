@@ -19,6 +19,12 @@ public class Command {
         this.unknown = words.size() > 0 ? EnumCommand.getCmd(words.get(0), bundle) == null : true;
     }
 
+    public Command(EnumCommand enumCommand, ResourceBundle bundle) {
+        this.commandWords = new ArrayList<>();
+        commandWords.add(enumCommand.getText(bundle));
+        this.unknown = false;
+    }
+
     /**
      * Return the word corresponding to the specified index of the command. If
      * the command was not understood, or there is no word at the index, the

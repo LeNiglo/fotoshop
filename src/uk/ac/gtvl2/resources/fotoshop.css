@@ -1,0 +1,58 @@
+* {
+    -fx-mycolor1: whitesmoke;
+    -fx-mycolor2: cornflowerblue;
+}
+
+.root {
+    -fx-font-family: "Verdana";
+    -fx-base: -fx-mycolor1;
+}
+
+#status-bar {
+    -fx-background-color: -fx-mycolor2;
+    -fx-min-height: 42px;
+    -fx-padding: 4 7;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: -fx-mycolor1;
+}
+
+#status-bar Text {
+    -fx-fill: white;
+}
+
+#action-bar {
+    -fx-padding: 7 15;
+    -fx-alignment: center-left;
+    -fx-background-color: -fx-mycolor2;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: -fx-mycolor1;
+}
+
+#command-box {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-alignment: center;
+}
+
+#filter-grid {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-background-color: -fx-mycolor2;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: -fx-mycolor1;
+}
+
+#cache-box {
+    -fx-spacing: 10;
+    -fx-padding: 20;
+    -fx-background-color: -fx-mycolor2;
+    -fx-border-width: 0 0 0 1;
+    -fx-border-color: -fx-mycolor1;
+}
+
+StackPane,
+ScrollPane {
+    -fx-alignment: center;
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+}

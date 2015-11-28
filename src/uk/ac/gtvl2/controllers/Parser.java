@@ -55,4 +55,18 @@ public class Parser {
 
         return new Command(words, this.view.getBundle());
     }
+
+    /**
+     * This methods checks if you can convert a long to an int
+     *
+     * @param l long to cast
+     * @return long casted to int
+     */
+    public static int safeLongToInt(long l) {
+        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException
+                    (l + " cannot be cast to int without changing its value.");
+        }
+        return (int) l;
+    }
 }

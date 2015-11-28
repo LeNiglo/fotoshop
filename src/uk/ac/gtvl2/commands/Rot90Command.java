@@ -3,11 +3,9 @@ package uk.ac.gtvl2.commands;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import uk.ac.gtvl2.controllers.EditorController;
-import uk.ac.gtvl2.models.Command;
-import uk.ac.gtvl2.models.EditableImage;
-import uk.ac.gtvl2.models.Editor;
-import uk.ac.gtvl2.models.Filter;
+import uk.ac.gtvl2.models.*;
 import uk.ac.gtvl2.views.EditorView;
+import uk.ac.gtvl2.views.GuiView;
 
 import java.awt.*;
 
@@ -23,6 +21,8 @@ public class Rot90Command implements ICommand {
         }
         model.pushFilter(new Filter(model.getCurrentImage(), view.getTranslation("ROT90")));
         model.setCurrentImage(rotate(model, view, 90));
+        if (!view.isConsole())
+            ((GuiView) view).updateCurrentImage();
         return false;
     }
 
@@ -45,14 +45,7 @@ public class Rot90Command implements ICommand {
     }
 
     @Override
-    public boolean undo(Editor model, EditorView view, EditorController controller) {
-        EditableImage image = model.popFilter().getPreviousImage();
-        model.setCurrentImage(image);
-        return true;
-    }
-
-    @Override
     public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
-        return null;
+        return event -> run(model, view, controller, new Command(EnumCommand.ROT90, view.getBundle()));
     }
 }

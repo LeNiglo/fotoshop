@@ -18,11 +18,6 @@ public class ListCacheCommand implements ICommand {
     }
 
     @Override
-    public boolean undo(Editor model, EditorView view, EditorController controller) {
-        return false;
-    }
-
-    @Override
     public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
         return null;
     }

@@ -8,28 +8,30 @@ import uk.ac.gtvl2.models.Editor;
 import uk.ac.gtvl2.models.EnumCommand;
 import uk.ac.gtvl2.models.Filter;
 import uk.ac.gtvl2.views.EditorView;
-
-import java.util.stream.Collectors;
+import uk.ac.gtvl2.views.GuiView;
 
 /**
- * Created by leniglo on 20/11/15.
+ * Created by leniglo on 28/11/15.
  */
-public class LookCommand implements ICommand {
+public class UndoCommand implements ICommand {
     @Override
     public boolean run(Editor model, EditorView view, EditorController controller, Command command) {
-        if (model.getCurrentImage() == null) {
-            view.showMessage(view.getTranslation("LOOK_NULL"));
-            return false;
-        } else {
+        if (model.getFilters().size() > 0) {
+            Filter previous = model.popFilter();
 
-            view.showMessage(view.getTranslation("LOOK_SUCCESS", model.getCurrentImage().getName(), model.getFilters().stream().map(Filter::getName).collect(Collectors.joining(", "))));
-            new ListCacheCommand().run(model, view, controller, command);
+            model.setCurrentImage(previous.getPreviousImage());
+            if (!view.isConsole()) {
+                ((GuiView) view).updateCurrentImage();
+            }
+            return true;
+        } else {
+            view.showError(view.getTranslation("USAGE_UNDO"));
             return false;
         }
     }
 
     @Override
     public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
-        return event -> run(model, view, controller, new Command(EnumCommand.LOOK, view.getBundle()));
+        return event -> run(model, view, controller, new Command(EnumCommand.UNDO, view.getBundle()));
     }
 }

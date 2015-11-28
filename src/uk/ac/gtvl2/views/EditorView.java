@@ -1,8 +1,8 @@
 package uk.ac.gtvl2.views;
 
 import javafx.application.Application;
+import javafx.stage.Stage;
 import uk.ac.gtvl2.controllers.EditorController;
-import uk.ac.gtvl2.controllers.Parser;
 import uk.ac.gtvl2.models.Editor;
 
 import java.text.MessageFormat;
@@ -54,13 +54,16 @@ public abstract class EditorView extends Application {
 
     public abstract void showMessage(String message);
 
-    public abstract Parser getParser();
-
     public abstract boolean isConsole();
-
-    public abstract void showPrompt();
 
     public void attachController(EditorController controller) {
         this.controller = controller;
     }
+
+    /*
+     * JavaFX required
+     */
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {}
 }

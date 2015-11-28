@@ -1,21 +1,12 @@
 package uk.ac.gtvl2.controllers;
 
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.stage.FileChooser;
 import uk.ac.gtvl2.commands.ICommand;
 import uk.ac.gtvl2.configurations.EditorConfig;
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.models.Editor;
 import uk.ac.gtvl2.models.EnumCommand;
+import uk.ac.gtvl2.views.ConsoleView;
 import uk.ac.gtvl2.views.EditorView;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by leniglo on 20/11/15.
@@ -37,7 +28,7 @@ public class EditorController {
             this.view.showMessage(view.getTranslation("WELCOME"));
 
             while (!finished) {
-                Command command = this.view.getParser().getCommand();
+                Command command = ((ConsoleView) this.view).getParser().getCommand();
                 finished = processCommand(command);
             }
             this.view.showMessage(view.getTranslation("GOODBYE"));

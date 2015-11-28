@@ -26,7 +26,6 @@ public enum EnumCommand {
     UNDO("UndoCommand");
 
     private final String className;
-    private static String list;
 
     EnumCommand(String className) {
         this.className = className;
@@ -59,11 +58,8 @@ public enum EnumCommand {
 
 
     public static EnumCommand getCmd(String commandWord, ResourceBundle resourceBundle) {
-        for (EnumCommand enumCommand : EnumCommand.values()) {
-            if (enumCommand.getText(resourceBundle).equals(commandWord)) {
-                return enumCommand;
-            }
-        }
-        return null;
+        return Arrays.stream(EnumCommand.values())
+                .filter(enumCommand -> enumCommand.getText(resourceBundle).equals(commandWord))
+                .findFirst().orElse(null);
     }
 }

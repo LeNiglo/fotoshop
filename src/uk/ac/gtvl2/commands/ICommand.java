@@ -12,8 +12,5 @@ import uk.ac.gtvl2.views.EditorView;
  */
 public interface ICommand {
     public boolean run(Editor model, EditorView view, EditorController controller, Command command);
-
-    public boolean undo(Editor model, EditorView view, EditorController controller);
-
     public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller);
 }

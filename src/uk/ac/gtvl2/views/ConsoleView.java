@@ -32,27 +32,18 @@ public class ConsoleView extends EditorView {
             System.out.println(message);
     }
 
-    @Override
     public Parser getParser() {
         return this.parser;
+    }
+
+
+    public void showPrompt() {
+        System.out.print(this.getTranslation("PROMPT") == null ? "" : this.getTranslation("PROMPT"));
     }
 
     @Override
     public boolean isConsole() {
         return true;
-    }
-
-    @Override
-    public void showPrompt() {
-        System.out.print(this.getTranslation("PROMPT") == null ? "" : this.getTranslation("PROMPT"));
-    }
-
-    /*
-     * JavaFX required
-     */
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
     }
 
 }

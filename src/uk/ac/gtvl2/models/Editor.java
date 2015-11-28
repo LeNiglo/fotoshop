@@ -1,6 +1,8 @@
 package uk.ac.gtvl2.models;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -29,8 +31,8 @@ public class Editor {
         return this.filters.pop();
     }
 
-    public Stack<Filter> getFilters() {
-        return this.filters;
+    public List<Filter> getFilters() {
+        return this.filters.stream().collect(Collectors.toList());
     }
 
     public void setCurrentImage(EditableImage currentImage) {
@@ -63,5 +65,9 @@ public class Editor {
 
     public String listCache() {
         return this.cache.keySet().stream().collect(Collectors.joining(", "));
+    }
+
+    public Map<String, EditableImage> getFullCache() {
+        return cache;
     }
 }
