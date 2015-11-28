@@ -7,6 +7,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -17,13 +18,11 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import uk.ac.gtvl2.Main;
 import uk.ac.gtvl2.commands.ICommand;
 import uk.ac.gtvl2.configurations.EditorConfig;
-import uk.ac.gtvl2.models.EditableImage;
 import uk.ac.gtvl2.models.EnumCommand;
 import uk.ac.gtvl2.models.Filter;
-
-import java.util.Map;
 
 /**
  * Created by leniglo on 20/11/15.
@@ -34,8 +33,9 @@ public class GuiView extends EditorView {
     private Text statusText;
     private Stage stage;
     private ImageView imageView;
+    private TextField cacheTextField;
     private ListView<Filter> filterList;
-    private TableView cacheTable;
+    private ListView<String> cacheList;
     private final DoubleProperty zoomProperty = new SimpleDoubleProperty(200);
 
     private static final int WINDOW_WIDTH = 1024;
@@ -53,12 +53,12 @@ public class GuiView extends EditorView {
         root = new BorderPane(this.createCenter(), this.createTop(), this.createRight(), this.createBot(), this.createLeft());
         root.getStylesheets().add("uk/ac/gtvl2/resources/fotoshop.css");
         stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
+        stage.setOnCloseRequest(event -> Main.exitRequested(GuiView.this));
         stage.show();
 
         try {
             controller.edit();
         } catch (Exception e) {
-            e.printStackTrace();
             showError(getTranslation("ERROR", e.getMessage(), (e.getCause() != null ? e.getCause().getMessage() : "")));
         }
     }
@@ -68,9 +68,11 @@ public class GuiView extends EditorView {
         ScrollPane scrollPane = new ScrollPane();
         StackPane imageHolder = new StackPane(imageView);
 
-        zoomProperty.addListener(arg0 -> {
-            imageView.setFitWidth(zoomProperty.get() * 4);
-            imageView.setFitHeight(zoomProperty.get() * 3);
+        zoomProperty.addListener(event -> {
+            if (imageView.getImage() != null) {
+                imageView.setFitWidth(zoomProperty.get() * 4);
+                imageView.setFitHeight(zoomProperty.get() * 3);
+            }
         });
 
         scrollPane.addEventFilter(ScrollEvent.ANY, event -> {
@@ -102,9 +104,10 @@ public class GuiView extends EditorView {
         // Left Pane
         Button openBtn = this.createButton(EnumCommand.OPEN);
         Button saveBtn = this.createButton(EnumCommand.SAVE);
+        Button scriptBtn = this.createButton(EnumCommand.SCRIPT);
         Button undoBtn = this.createButton(EnumCommand.UNDO);
 
-        HBox leftPane = new HBox(5, openBtn, saveBtn, undoBtn);
+        HBox leftPane = new HBox(5, openBtn, saveBtn, scriptBtn, undoBtn);
         leftPane.setAlignment(Pos.CENTER_LEFT);
         gridPane.add(leftPane, 0, 0);
 
@@ -119,10 +122,53 @@ public class GuiView extends EditorView {
     }
 
     private Node createRight() {
-        cacheTable = new TableView();
+        GridPane gridPane = new GridPane();
+        gridPane.setId("cache-box");
+        gridPane.setPrefHeight(WINDOW_HEIGHT);
 
-        Pane pane = null;
-        return pane;
+        RowConstraints row = new RowConstraints();
+        row.setPercentHeight(5);
+        gridPane.getRowConstraints().add(row);
+        row = new RowConstraints();
+        row.setPercentHeight(85);
+        gridPane.getRowConstraints().add(row);
+        row = new RowConstraints();
+        row.setPercentHeight(5);
+        gridPane.getRowConstraints().add(row);
+        row = new RowConstraints();
+        row.setPercentHeight(5);
+        gridPane.getRowConstraints().add(row);
+
+        Label label = new Label(getTranslation("CACHE"));
+        gridPane.add(label, 0, 0);
+
+        cacheList = new ListView<>();
+        cacheList.setEditable(false);
+        cacheList.setDisable(false);
+
+        gridPane.add(cacheList, 0, 1);
+
+
+        cacheTextField = new TextField();
+        Button putBtn = this.createButton(EnumCommand.PUT);
+        Button getBtn = this.createButton(EnumCommand.GET);
+        Button remBtn = this.createButton(EnumCommand.REMOVE);
+
+        VBox vBox = new VBox(cacheTextField);
+        vBox.setMaxWidth(Double.MAX_VALUE);
+        vBox.setSpacing(10);
+        vBox.setPadding(new Insets(0));
+        vBox.setAlignment(Pos.CENTER);
+        gridPane.add(vBox, 0, 2);
+
+        HBox hBox = new HBox(putBtn, getBtn, remBtn);
+        hBox.setMaxWidth(Double.MAX_VALUE);
+        hBox.setSpacing(10);
+        hBox.setPadding(new Insets(0));
+        hBox.setAlignment(Pos.CENTER);
+        gridPane.add(hBox, 0, 3);
+
+        return gridPane;
     }
 
     private Node createBot() {
@@ -135,7 +181,7 @@ public class GuiView extends EditorView {
     private Node createLeft() {
 
         GridPane gridPane = new GridPane();
-        gridPane.setId("filter-grid");
+        gridPane.setId("filter-box");
         gridPane.setPrefHeight(WINDOW_HEIGHT);
 
         RowConstraints row = new RowConstraints();
@@ -202,21 +248,34 @@ public class GuiView extends EditorView {
         }
     }
 
-    public Stage getStage() {
-        return stage;
-    }
-
-    public void updateCurrentImage() {
-        if (imageView != null) {
+    public void update() {
+        if (imageView != null && this.model.getCurrentImage() != null) {
             imageView.setImage(SwingFXUtils.toFXImage(this.model.getCurrentImage(), null));
             imageView.preserveRatioProperty().set(true);
         }
         if (filterList != null) {
-            filterList.setItems(FXCollections.observableList(this.model.getFilters()));
+            filterList.setItems(FXCollections.observableList(this.model.getFiltersAsList()));
         }
-        if (cacheTable != null) {
-            // cacheTable.setItems(FXCollections.observableMap(this.model.getFullCache()));
+        if (cacheList != null) {
+            cacheList.setItems(FXCollections.observableList(this.model.getCacheList()));
         }
 
+    }
+
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public String getCacheTextField() {
+        return cacheTextField.getText();
+    }
+
+    public void clearCacheTextField() {
+        cacheTextField.clear();
+    }
+
+    public String getCacheSelected() {
+        return this.cacheList.getSelectionModel().getSelectedItem();
     }
 }

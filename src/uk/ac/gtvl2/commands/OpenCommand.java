@@ -4,8 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import uk.ac.gtvl2.controllers.EditorController;
+import uk.ac.gtvl2.models.ColorImage;
 import uk.ac.gtvl2.models.Command;
-import uk.ac.gtvl2.models.EditableImage;
+import uk.ac.gtvl2.models.Cache;
 import uk.ac.gtvl2.models.Editor;
 import uk.ac.gtvl2.views.EditorView;
 import uk.ac.gtvl2.views.GuiView;
@@ -21,10 +22,10 @@ import java.util.List;
  */
 public class OpenCommand implements ICommand {
 
-    private EditableImage loadImage(EditorView view, String name) {
-        EditableImage img = null;
+    private ColorImage loadImage(EditorView view, String name) {
+        ColorImage img = null;
         try {
-            img = new EditableImage(ImageIO.read(new File(name)));
+            img = new ColorImage(ImageIO.read(new File(name)));
             img.setName(name);
         } catch (IOException e) {
             view.showError(view.getTranslation("OPEN_ERROR_FILE", name));
@@ -35,19 +36,19 @@ public class OpenCommand implements ICommand {
     @Override
     public boolean run(Editor model, EditorView view, EditorController controller, Command command) {
         if (!command.hasWord(1)) {
-            view.showError(view.getTranslation("OPEN_ERROR"));
+            view.showError(view.getTranslation("OPEN_ERROR1"));
             return false;
         }
 
-        EditableImage image = loadImage(view, command.getWord(1));
+        ColorImage image = loadImage(view, command.getWord(1));
         if (image != null) {
             model.setCurrentImage(image);
             if (!view.isConsole()) {
-                ((GuiView) view).updateCurrentImage();
+                ((GuiView) view).update();
             }
             view.showMessage(view.getTranslation("OPEN_SUCCESS", image.getName()));
         } else {
-            view.showError(view.getTranslation("OPEN_ERROR"));
+            view.showError(view.getTranslation("OPEN_ERROR2"));
         }
         return false;
     }
@@ -65,7 +66,7 @@ public class OpenCommand implements ICommand {
                 words.add(file.getAbsolutePath());
 
                 Command cmd = new Command(words, view.getBundle());
-                this.run(model, view, controller, cmd);
+                run(model, view, controller, cmd);
             }
 
         };

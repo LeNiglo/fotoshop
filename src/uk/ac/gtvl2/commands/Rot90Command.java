@@ -20,13 +20,13 @@ public class Rot90Command implements ICommand {
             return false;
         }
         model.pushFilter(new Filter(model.getCurrentImage(), view.getTranslation("ROT90")));
-        model.setCurrentImage(rotate(model, view, 90));
+        model.setCurrentImage(rotate(model, 90));
         if (!view.isConsole())
-            ((GuiView) view).updateCurrentImage();
+            ((GuiView) view).update();
         return false;
     }
 
-    private EditableImage rotate(Editor model, EditorView view, int degrees) {
+    private ColorImage rotate(Editor model, int degrees) {
         double rotation = Math.toRadians(degrees);
         double sin = Math.abs(Math.sin(rotation));
         double cos = Math.abs(Math.cos(rotation));
@@ -35,7 +35,7 @@ public class Rot90Command implements ICommand {
         int newWidth = (int) Math.floor(w * cos + h * sin);
         int newHeight = (int) Math.floor(h * cos + w * sin);
 
-        EditableImage rotImage = new EditableImage(newWidth, newHeight);
+        ColorImage rotImage = new ColorImage(newWidth, newHeight);
         Graphics2D g = rotImage.createGraphics();
         g.translate((newWidth - w) / 2, (newHeight - h) / 2);
         g.rotate(rotation, w / 2, h / 2);

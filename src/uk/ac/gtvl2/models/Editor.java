@@ -2,7 +2,6 @@ package uk.ac.gtvl2.models;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -10,17 +9,21 @@ import java.util.stream.Collectors;
  * Created by leniglo on 20/11/15.
  */
 public class Editor {
-    private EditableImage currentImage;
+    private ColorImage currentImage;
+    private HashMap<String, Cache> cache;
     private Stack<Filter> filters;
-    private HashMap<String, EditableImage> cache;
 
     public Editor() {
         this.cache = new HashMap<>();
         this.filters = new Stack<>();
     }
 
-    public EditableImage getCurrentImage() {
+    public ColorImage getCurrentImage() {
         return currentImage;
+    }
+
+    public void setCurrentImage(ColorImage currentImage) {
+        this.currentImage = currentImage;
     }
 
     public Filter pushFilter(Filter filter) {
@@ -31,15 +34,15 @@ public class Editor {
         return this.filters.pop();
     }
 
-    public List<Filter> getFilters() {
+    public Stack<Filter> getFilters() {
+        return this.filters;
+    }
+
+    public List<Filter> getFiltersAsList() {
         return this.filters.stream().collect(Collectors.toList());
     }
 
-    public void setCurrentImage(EditableImage currentImage) {
-        this.currentImage = currentImage;
-    }
-
-    public EditableImage getCache(String key) {
+    public Cache getCache(String key) {
         if (this.cache.containsKey(key)) {
             return this.cache.get(key);
         } else {
@@ -47,9 +50,9 @@ public class Editor {
         }
     }
 
-    public boolean putCache(String key, EditableImage image) {
+    public boolean putCache(String key, ColorImage image) {
         if (!this.cache.containsKey(key)) {
-            this.cache.put(key, image);
+            this.cache.put(key, new Cache(image, this.filters));
             return true;
         }
         return false;
@@ -67,7 +70,11 @@ public class Editor {
         return this.cache.keySet().stream().collect(Collectors.joining(", "));
     }
 
-    public Map<String, EditableImage> getFullCache() {
-        return cache;
+    public List<String> getCacheList() {
+        return cache.keySet().stream().collect(Collectors.toList());
+    }
+
+    public void setFilters(Stack<Filter> filters) {
+        this.filters = (Stack<Filter>) filters.clone();
     }
 }

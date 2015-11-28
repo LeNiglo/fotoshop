@@ -21,8 +21,14 @@ public class MonoCommand implements ICommand {
             return false;
         }
 
-        EditableImage saveImage = model.getCurrentImage();
-        EditableImage tmpImage = new EditableImage(model.getCurrentImage());
+        model.pushFilter(new Filter(model.getCurrentImage(), EnumCommand.MONO.getText(view.getBundle())));
+        model.setCurrentImage(mono(model.getCurrentImage(), view));
+        if (!view.isConsole()) ((GuiView) view).update();
+        return false;
+    }
+
+    private ColorImage mono(ColorImage image, EditorView view) {
+        ColorImage tmpImage = new ColorImage(image);
 
         int height = tmpImage.getHeight();
         int width = tmpImage.getWidth();
@@ -35,15 +41,12 @@ public class MonoCommand implements ICommand {
                             + 0.114 * pix.getBlue()));
                     tmpImage.setPixel(x, y, new Color(lum, lum, lum));
                 } catch (IllegalArgumentException e) {
-                    return false;
+                    view.showError(view.getTranslation("MONO_ERROR"));
+                    return image;
                 }
             }
         }
-
-        model.pushFilter(new Filter(saveImage, EnumCommand.MONO.getText(view.getBundle())));
-        model.setCurrentImage(tmpImage);
-        if (!view.isConsole()) ((GuiView) view).updateCurrentImage();
-        return false;
+        return tmpImage;
     }
 
     @Override

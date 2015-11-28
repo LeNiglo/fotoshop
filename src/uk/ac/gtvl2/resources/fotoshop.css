@@ -34,7 +34,7 @@
     -fx-alignment: center;
 }
 
-#filter-grid {
+#filter-box {
     -fx-spacing: 10;
     -fx-padding: 10;
     -fx-background-color: -fx-mycolor2;

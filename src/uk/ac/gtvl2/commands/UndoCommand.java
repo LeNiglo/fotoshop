@@ -16,14 +16,14 @@ import uk.ac.gtvl2.views.GuiView;
 public class UndoCommand implements ICommand {
     @Override
     public boolean run(Editor model, EditorView view, EditorController controller, Command command) {
-        if (model.getFilters().size() > 0) {
+        if (model.getFiltersAsList().size() > 0) {
             Filter previous = model.popFilter();
 
             model.setCurrentImage(previous.getPreviousImage());
             if (!view.isConsole()) {
-                ((GuiView) view).updateCurrentImage();
+                ((GuiView) view).update();
             }
-            return true;
+            return false;
         } else {
             view.showError(view.getTranslation("USAGE_UNDO"));
             return false;

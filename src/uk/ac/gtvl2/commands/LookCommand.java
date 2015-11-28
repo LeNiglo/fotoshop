@@ -22,7 +22,7 @@ public class LookCommand implements ICommand {
             return false;
         } else {
 
-            view.showMessage(view.getTranslation("LOOK_SUCCESS", model.getCurrentImage().getName(), model.getFilters().stream().map(Filter::getName).collect(Collectors.joining(", "))));
+            view.showMessage(view.getTranslation("LOOK_SUCCESS", model.getCurrentImage().getName(), model.getFiltersAsList().stream().map(Filter::getName).collect(Collectors.joining(", "))));
             new ListCacheCommand().run(model, view, controller, command);
             return false;
         }

@@ -16,6 +16,15 @@ import java.awt.image.BufferedImage;
  */
 public class ColorImage extends BufferedImage {
 
+    private String name;
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getName() {
+        return this.name;
+    }
+
+
     /**
      * Create a ColorImage copied from a BufferedImage Convert to 24-bit direct
      * colour

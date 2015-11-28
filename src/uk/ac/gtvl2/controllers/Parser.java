@@ -2,6 +2,7 @@ package uk.ac.gtvl2.controllers;
 
 import uk.ac.gtvl2.models.Command;
 import uk.ac.gtvl2.views.ConsoleView;
+import uk.ac.gtvl2.views.EditorView;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -13,14 +14,14 @@ import java.util.Scanner;
  */
 public class Parser {
     private Scanner reader;
-    private final ConsoleView view;
+    private final EditorView view;
 
     /**
      * Create a parser to read from the terminal window.
      *
      * @param v The editor view
      */
-    public Parser(ConsoleView v) {
+    public Parser(EditorView v) {
         reader = new Scanner(System.in);
         view = v;
     }
@@ -43,7 +44,8 @@ public class Parser {
         String inputLine;
         List<String> words = new ArrayList<>();
 
-        view.showPrompt();
+        if (view.isConsole())
+            ((ConsoleView) view).showPrompt();
 
         inputLine = reader.nextLine();
 
