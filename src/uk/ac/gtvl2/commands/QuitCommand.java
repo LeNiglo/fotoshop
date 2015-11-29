@@ -19,6 +19,6 @@ public class QuitCommand implements ICommand {
 
     @Override
     public EventHandler<ActionEvent> handler(Editor model, EditorView view, EditorController controller) {
-        return event -> Main.exitRequested(view);
+        return event -> Main.exitRequested(view, null);
     }
 }

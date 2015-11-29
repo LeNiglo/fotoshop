@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.WindowEvent;
 import uk.ac.gtvl2.views.ConsoleView;
 import uk.ac.gtvl2.views.EditorView;
 import uk.ac.gtvl2.views.GuiView;
@@ -26,7 +27,7 @@ public class Main {
 
     }
 
-    public static boolean exitRequested(EditorView view) {
+    public static boolean exitRequested(EditorView view, WindowEvent event) {
         if (!view.isConsole()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(view.getTranslation("QUIT"));
@@ -43,6 +44,8 @@ public class Main {
                 }
                 return true;
             }
+            if (event != null)
+                event.consume();
             return false;
         } else {
             return true;

@@ -1,5 +1,6 @@
 package uk.ac.gtvl2.views;
 
+import javafx.animation.FadeTransition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
@@ -13,11 +14,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.Reflection;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import uk.ac.gtvl2.Main;
 import uk.ac.gtvl2.commands.ICommand;
 import uk.ac.gtvl2.configurations.EditorConfig;
@@ -53,7 +56,7 @@ public class GuiView extends EditorView {
         root = new BorderPane(this.createCenter(), this.createTop(), this.createRight(), this.createBot(), this.createLeft());
         root.getStylesheets().add("uk/ac/gtvl2/resources/fotoshop.css");
         stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
-        stage.setOnCloseRequest(event -> Main.exitRequested(GuiView.this));
+        stage.setOnCloseRequest(event -> Main.exitRequested(GuiView.this, event));
         stage.show();
 
         try {
@@ -67,6 +70,10 @@ public class GuiView extends EditorView {
         imageView = new ImageView();
         ScrollPane scrollPane = new ScrollPane();
         StackPane imageHolder = new StackPane(imageView);
+
+        Reflection r = new Reflection(10, 0.7f, 0.7f, 0);
+
+        imageView.setEffect(r);
 
         zoomProperty.addListener(event -> {
             if (imageView.getImage() != null) {
@@ -84,6 +91,8 @@ public class GuiView extends EditorView {
         });
 
         scrollPane.setContent(imageHolder);
+        scrollPane.setPrefHeight(WINDOW_HEIGHT);
+        scrollPane.setPrefWidth(WINDOW_WIDTH);
         return scrollPane;
     }
 
@@ -93,15 +102,14 @@ public class GuiView extends EditorView {
         gridPane.setPrefWidth(WINDOW_WIDTH);
 
         ColumnConstraints column = new ColumnConstraints();
-        column.setPercentWidth(70);
+        column.setPercentWidth(60);
         column.setHalignment(HPos.LEFT);
         gridPane.getColumnConstraints().add(column);
         column = new ColumnConstraints();
-        column.setPercentWidth(30);
+        column.setPercentWidth(40);
         column.setHalignment(HPos.RIGHT);
         gridPane.getColumnConstraints().add(column);
 
-        // Left Pane
         Button openBtn = this.createButton(EnumCommand.OPEN);
         Button saveBtn = this.createButton(EnumCommand.SAVE);
         Button scriptBtn = this.createButton(EnumCommand.SCRIPT);
@@ -111,7 +119,6 @@ public class GuiView extends EditorView {
         leftPane.setAlignment(Pos.CENTER_LEFT);
         gridPane.add(leftPane, 0, 0);
 
-        // Right Pane
         Button helpBtn = this.createButton(EnumCommand.HELP);
         Button quitBtn = this.createButton(EnumCommand.QUIT);
 
@@ -145,9 +152,10 @@ public class GuiView extends EditorView {
         cacheList = new ListView<>();
         cacheList.setEditable(false);
         cacheList.setDisable(false);
+        cacheList.setMinHeight(50);
+        cacheList.setPrefHeight(200);
 
         gridPane.add(cacheList, 0, 1);
-
 
         cacheTextField = new TextField();
         Button putBtn = this.createButton(EnumCommand.PUT);
@@ -207,6 +215,7 @@ public class GuiView extends EditorView {
         filterList = new ListView<>();
         filterList.setEditable(false);
         filterList.setDisable(true);
+        filterList.setMinHeight(50);
         gridPane.add(filterList, 0, 2);
         return gridPane;
     }
@@ -250,8 +259,16 @@ public class GuiView extends EditorView {
 
     public void update() {
         if (imageView != null && this.model.getCurrentImage() != null) {
+            FadeTransition transition = new FadeTransition(Duration.millis(500), imageView);
+            transition.setFromValue(0.1);
+            transition.setToValue(1.0);
+            transition.setCycleCount(1);
+            transition.setAutoReverse(false);
+
+            imageView.setOpacity(0.0f);
             imageView.setImage(SwingFXUtils.toFXImage(this.model.getCurrentImage(), null));
             imageView.preserveRatioProperty().set(true);
+            transition.play();
         }
         if (filterList != null) {
             filterList.setItems(FXCollections.observableList(this.model.getFiltersAsList()));
