@@ -2,6 +2,7 @@ package uk.ac.gtvl2.views;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import uk.ac.gtvl2.configurations.EditorConfig;
 import uk.ac.gtvl2.controllers.EditorController;
 import uk.ac.gtvl2.models.Editor;
 
@@ -15,7 +16,6 @@ import java.util.ResourceBundle;
 public abstract class EditorView extends Application {
     private Locale currentLocale;
     private ResourceBundle bundle;
-    private static final String BUNDLE_NAME = "uk/ac/gtvl2/resources/MessagesBundle";
     protected EditorController controller;
     protected Editor model;
 
@@ -38,7 +38,7 @@ public abstract class EditorView extends Application {
         if (this.currentLocale != locale) {
             this.currentLocale = locale;
             ResourceBundle.clearCache();
-            this.bundle = ResourceBundle.getBundle(BUNDLE_NAME, this.currentLocale);
+            this.bundle = ResourceBundle.getBundle(EditorConfig.BUNDLE_NAME, this.currentLocale);
         }
         return this.bundle.getLocale().equals(locale);
     }

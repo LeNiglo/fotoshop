@@ -1,5 +1,9 @@
 package uk.ac.gtvl2.models;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

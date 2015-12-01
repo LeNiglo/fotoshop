@@ -11,6 +11,8 @@ public class EditorConfig {
     }
 
     public static final String COMMANDS_PKG = "uk.ac.gtvl2.commands.";
+    public static final String BUNDLE_NAME = "uk/ac/gtvl2/resources/MessagesBundle";
+    public static final String CSS_FILE = "uk/ac/gtvl2/resources/fotoshop.css";
 
     private EditorConfig() {
 
