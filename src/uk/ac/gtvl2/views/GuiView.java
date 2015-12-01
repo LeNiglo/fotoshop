@@ -7,19 +7,19 @@ import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -99,35 +99,36 @@ public class GuiView extends EditorView {
     }
 
     private Node createTop() {
-        GridPane gridPane = new GridPane();
-        gridPane.setId("action-bar");
-        gridPane.setPrefWidth(WINDOW_WIDTH);
+        MenuItem openItem = this.createMenuItem(EnumCommand.OPEN);
+        openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.META_DOWN));
+        MenuItem scriptItem = this.createMenuItem(EnumCommand.SCRIPT);
+        MenuItem saveItem = this.createMenuItem(EnumCommand.SAVE);
+        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.META_DOWN));
+        MenuItem quitItem = this.createMenuItem(EnumCommand.QUIT);
+        quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.META_DOWN));
+        MenuItem undoItem = this.createMenuItem(EnumCommand.UNDO);
+        undoItem.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN));
+        MenuItem rotItem = this.createMenuItem(EnumCommand.ROT90);
+        MenuItem monoItem = this.createMenuItem(EnumCommand.MONO);
+        MenuItem helpItem = this.createMenuItem(EnumCommand.HELP);
+        helpItem.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCombination.META_DOWN));
 
-        ColumnConstraints column = new ColumnConstraints();
-        column.setPercentWidth(60);
-        column.setHalignment(HPos.LEFT);
-        gridPane.getColumnConstraints().add(column);
-        column = new ColumnConstraints();
-        column.setPercentWidth(40);
-        column.setHalignment(HPos.RIGHT);
-        gridPane.getColumnConstraints().add(column);
-
-        Button openBtn = this.createButton(EnumCommand.OPEN);
-        Button saveBtn = this.createButton(EnumCommand.SAVE);
-        Button scriptBtn = this.createButton(EnumCommand.SCRIPT);
-        Button undoBtn = this.createButton(EnumCommand.UNDO);
-
-        HBox leftPane = new HBox(5, openBtn, saveBtn, scriptBtn, undoBtn);
-        leftPane.setAlignment(Pos.CENTER_LEFT);
-        gridPane.add(leftPane, 0, 0);
-
-        Button helpBtn = this.createButton(EnumCommand.HELP);
-        Button quitBtn = this.createButton(EnumCommand.QUIT);
-
-        HBox rightPane = new HBox(5, helpBtn, quitBtn);
-        rightPane.setAlignment(Pos.CENTER_RIGHT);
-        gridPane.add(rightPane, 1, 0);
-        return gridPane;
+        MenuBar menuBar = new MenuBar();
+        Menu menuFile = new Menu(getTranslation("FILE"));
+        menuFile.getItems().addAll(openItem,
+                scriptItem,
+                new SeparatorMenuItem(),
+                saveItem,
+                quitItem);
+        Menu menuEdit = new Menu(getTranslation("EDIT"));
+        menuEdit.getItems().addAll(undoItem,
+                new SeparatorMenuItem(),
+                rotItem,
+                monoItem);
+        Menu menuHelp = new Menu(getTranslation("HELP"));
+        menuHelp.getItems().addAll(helpItem);
+        menuBar.getMenus().addAll(menuFile, menuEdit, menuHelp);
+        return menuBar;
     }
 
     private Node createRight() {
@@ -135,21 +136,18 @@ public class GuiView extends EditorView {
         gridPane.setId("cache-box");
         gridPane.setPrefHeight(WINDOW_HEIGHT);
 
-        RowConstraints row = new RowConstraints();
-        row.setPercentHeight(5);
-        gridPane.getRowConstraints().add(row);
-        row = new RowConstraints();
-        row.setPercentHeight(85);
-        gridPane.getRowConstraints().add(row);
-        row = new RowConstraints();
-        row.setPercentHeight(5);
-        gridPane.getRowConstraints().add(row);
-        row = new RowConstraints();
-        row.setPercentHeight(5);
-        gridPane.getRowConstraints().add(row);
-
-        Label label = new Label(getTranslation("CACHE"));
+        Label label = new Label(getTranslation("FILTERS"));
         gridPane.add(label, 0, 0);
+        filterList = new ListView<>();
+        filterList.setEditable(false);
+        filterList.setDisable(true);
+        filterList.setMinHeight(50);
+        gridPane.add(filterList, 0, 1);
+
+        gridPane.add(new Separator(Orientation.HORIZONTAL), 0, 2);
+
+        label = new Label(getTranslation("CACHE"));
+        gridPane.add(label, 0, 3);
 
         cacheList = new ListView<>();
         cacheList.setEditable(false);
@@ -157,7 +155,7 @@ public class GuiView extends EditorView {
         cacheList.setMinHeight(50);
         cacheList.setPrefHeight(200);
 
-        gridPane.add(cacheList, 0, 1);
+        gridPane.add(cacheList, 0, 4);
 
         cacheTextField = new TextField();
         Button putBtn = this.createButton(EnumCommand.PUT);
@@ -169,14 +167,14 @@ public class GuiView extends EditorView {
         vBox.setSpacing(10);
         vBox.setPadding(new Insets(0));
         vBox.setAlignment(Pos.CENTER);
-        gridPane.add(vBox, 0, 2);
+        gridPane.add(vBox, 0, 5);
 
         HBox hBox = new HBox(putBtn, getBtn, remBtn);
         hBox.setMaxWidth(Double.MAX_VALUE);
         hBox.setSpacing(10);
         hBox.setPadding(new Insets(0));
         hBox.setAlignment(Pos.CENTER);
-        gridPane.add(hBox, 0, 3);
+        gridPane.add(hBox, 0, 6);
 
         return gridPane;
     }
@@ -189,37 +187,7 @@ public class GuiView extends EditorView {
     }
 
     private Node createLeft() {
-
-        GridPane gridPane = new GridPane();
-        gridPane.setId("filter-box");
-        gridPane.setPrefHeight(WINDOW_HEIGHT);
-
-        RowConstraints row = new RowConstraints();
-        row.setPercentHeight(49);
-        gridPane.getRowConstraints().add(row);
-        row = new RowConstraints();
-        row.setPercentHeight(2);
-        gridPane.getRowConstraints().add(row);
-        row = new RowConstraints();
-        row.setPercentHeight(49);
-        gridPane.getRowConstraints().add(row);
-
-        Button rotBtn = this.createButton(EnumCommand.ROT90);
-        Button monoBtn = this.createButton(EnumCommand.MONO);
-        rotBtn.setMaxWidth(Double.MAX_VALUE);
-        monoBtn.setMaxWidth(Double.MAX_VALUE);
-
-        VBox commandBox = new VBox(rotBtn, monoBtn);
-        commandBox.setId("command-box");
-        gridPane.add(commandBox, 0, 0);
-        gridPane.add(new Separator(Orientation.HORIZONTAL), 0, 1);
-
-        filterList = new ListView<>();
-        filterList.setEditable(false);
-        filterList.setDisable(true);
-        filterList.setMinHeight(50);
-        gridPane.add(filterList, 0, 2);
-        return gridPane;
+        return null;
     }
 
     @Override
@@ -247,6 +215,12 @@ public class GuiView extends EditorView {
         Button tmpBtn = new Button(enumCommand.getText(getBundle()));
         tmpBtn.setOnAction(this.createHandler(enumCommand));
         return tmpBtn;
+    }
+
+    private MenuItem createMenuItem(EnumCommand enumCommand) {
+        MenuItem tmpMenu = new MenuItem(enumCommand.getText(getBundle()));
+        tmpMenu.setOnAction(this.createHandler(enumCommand));
+        return tmpMenu;
     }
 
     private EventHandler<ActionEvent> createHandler(EnumCommand enumCommand) {
