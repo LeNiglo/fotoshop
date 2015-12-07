@@ -6,7 +6,6 @@ import javafx.stage.FileChooser;
 import uk.ac.gtvl2.controllers.EditorController;
 import uk.ac.gtvl2.models.ColorImage;
 import uk.ac.gtvl2.models.Command;
-import uk.ac.gtvl2.models.Cache;
 import uk.ac.gtvl2.models.Editor;
 import uk.ac.gtvl2.views.EditorView;
 import uk.ac.gtvl2.views.GuiView;
@@ -23,14 +22,15 @@ import java.util.List;
 public class OpenCommand implements ICommand {
 
     private ColorImage loadImage(EditorView view, String name) {
-        ColorImage img = null;
+        ColorImage img;
         try {
             img = new ColorImage(ImageIO.read(new File(name)));
             img.setName(name);
-        } catch (IOException e) {
+            return img;
+        } catch (IOException | NullPointerException e) {
             view.showError(view.getTranslation("OPEN_ERROR_FILE", name));
+            return null;
         }
-        return img;
     }
 
     @Override

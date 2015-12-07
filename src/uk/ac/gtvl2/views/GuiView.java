@@ -14,12 +14,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -206,10 +204,11 @@ public class GuiView extends EditorView {
 
         Button rotBtn = this.createButton(EnumCommand.ROT90);
         Button monoBtn = this.createButton(EnumCommand.MONO);
-        rotBtn.setMaxWidth(Double.MAX_VALUE);
-        monoBtn.setMaxWidth(Double.MAX_VALUE);
+        Button invertBtn = this.createButton(EnumCommand.INVERT);
+        Button flipHBtn = this.createButton(EnumCommand.FLIPH);
+        Button flipVBtn = this.createButton(EnumCommand.FLIPV);
 
-        VBox commandBox = new VBox(rotBtn, monoBtn);
+        VBox commandBox = new VBox(rotBtn, monoBtn, invertBtn, flipHBtn, flipVBtn);
         commandBox.setId("command-box");
         gridPane.add(commandBox, 0, 0);
         gridPane.add(new Separator(Orientation.HORIZONTAL), 0, 1);
@@ -246,6 +245,7 @@ public class GuiView extends EditorView {
     private Button createButton(EnumCommand enumCommand) {
         Button tmpBtn = new Button(enumCommand.getText(getBundle()));
         tmpBtn.setOnAction(this.createHandler(enumCommand));
+        tmpBtn.setMaxWidth(Double.MAX_VALUE);
         return tmpBtn;
     }
 
@@ -280,7 +280,6 @@ public class GuiView extends EditorView {
         }
 
     }
-
 
     public Stage getStage() {
         return stage;

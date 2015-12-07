@@ -9,6 +9,8 @@ import uk.ac.gtvl2.views.EditorView;
 import uk.ac.gtvl2.views.GuiView;
 
 import java.awt.*;
+import java.awt.image.LookupOp;
+import java.awt.image.LookupTable;
 
 /**
  * Created by leniglo on 28/11/15.
@@ -21,32 +23,25 @@ public class MonoCommand implements ICommand {
             return false;
         }
 
-        model.pushFilter(new Filter(model.getCurrentImage(), EnumCommand.MONO.getText(view.getBundle())));
-        model.setCurrentImage(mono(model.getCurrentImage(), view));
+        model.pushFilter(new Filter(model.getCurrentImage(), view.getTranslation("MONO")));
+        model.setCurrentImage(mono(model));
         if (!view.isConsole()) ((GuiView) view).update();
         return false;
     }
 
-    private ColorImage mono(ColorImage image, EditorView view) {
-        ColorImage tmpImage = new ColorImage(image);
-
-        int height = tmpImage.getHeight();
-        int width = tmpImage.getWidth();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Color pix = tmpImage.getPixel(x, y);
-                try {
-                    int lum = Parser.safeLongToInt(Math.round(0.299 * pix.getRed()
-                            + 0.587 * pix.getGreen()
-                            + 0.114 * pix.getBlue()));
-                    tmpImage.setPixel(x, y, new Color(lum, lum, lum));
-                } catch (IllegalArgumentException e) {
-                    view.showError(view.getTranslation("MONO_ERROR"));
-                    return image;
-                }
+    private ColorImage mono(Editor model) {
+        LookupTable lookup = new LookupTable(0, 3) {
+            @Override
+            public int[] lookupPixel(int[] src, int[] dest) {
+                int lum = Parser.safeLongToInt(Math.round(0.299 * src[0] + 0.587 * src[1] + 0.114 * src[2]));
+                dest[0] = lum;
+                dest[1] = lum;
+                dest[2] = lum;
+                return dest;
             }
-        }
-        return tmpImage;
+        };
+        LookupOp op = new LookupOp(lookup, new RenderingHints(null));
+        return Editor.createFiltered(model.getCurrentImage(), op);
     }
 
     @Override

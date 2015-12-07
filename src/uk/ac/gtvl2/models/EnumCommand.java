@@ -23,7 +23,10 @@ public enum EnumCommand {
     GET("GetCacheCommand"),
     REMOVE("RemoveCacheCommand"),
     LIST("ListCacheCommand"),
-    UNDO("UndoCommand");
+    UNDO("UndoCommand"),
+    FLIPH("FlipHCommand"),
+    FLIPV("FlipVCommand"),
+    INVERT("InvertCommand");
 
     private final String className;
 

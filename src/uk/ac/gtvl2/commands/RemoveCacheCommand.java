@@ -19,10 +19,10 @@ public class RemoveCacheCommand implements ICommand {
     @Override
     public boolean run(Editor model, EditorView view, EditorController controller, Command command) {
         if (!command.hasWord(1)) {
-            view.showError(view.getTranslation("REMOVE_ERROR"));
+            view.showError(view.getTranslation("REMOVE_ERROR1"));
         }
         if (!model.removeCache(command.getWord(1))) {
-            view.showError(view.getTranslation("REMOVE_ERROR"));
+            view.showError(view.getTranslation("REMOVE_ERROR2"));
         }
         if (!view.isConsole())
             ((GuiView) view).update();

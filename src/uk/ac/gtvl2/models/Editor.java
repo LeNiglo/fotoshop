@@ -1,5 +1,8 @@
 package uk.ac.gtvl2.models;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.LookupOp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -76,5 +79,21 @@ public class Editor {
 
     public void setFilters(Stack<Filter> filters) {
         this.filters = (Stack<Filter>) filters.clone();
+    }
+
+    public static ColorImage createTransformed(ColorImage image, AffineTransform at) {
+        ColorImage newImage = new ColorImage(image.getWidth(), image.getHeight());
+        newImage.setName(image.getName());
+        Graphics2D g = newImage.createGraphics();
+        g.transform(at);
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return newImage;
+    }
+
+    public static ColorImage createFiltered(ColorImage image, LookupOp op) {
+        ColorImage newImage = new ColorImage(op.filter(image, null));
+        newImage.setName(image.getName());
+        return newImage;
     }
 }

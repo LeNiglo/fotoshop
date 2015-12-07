@@ -35,7 +35,7 @@ public class ColorImage extends BufferedImage {
      *
      * @param image The image to copy
      */
-    public ColorImage(BufferedImage image) {
+    public ColorImage(BufferedImage image) throws NullPointerException {
         super(image.getWidth(), image.getHeight(), TYPE_INT_RGB);
         int width = image.getWidth();
         int height = image.getHeight();

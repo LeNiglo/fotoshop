@@ -25,7 +25,7 @@ public class UndoCommand implements ICommand {
             }
             return false;
         } else {
-            view.showError(view.getTranslation("USAGE_UNDO"));
+            view.showError(view.getTranslation("UNDO_ERROR"));
             return false;
         }
     }
